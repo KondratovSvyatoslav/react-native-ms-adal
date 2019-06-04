@@ -8,10 +8,10 @@ function MSAdalLogin(authority, clientId, redirectUri, resourceUri) {
     // First attempt to login silently using the cache and keychain functions
     // If this fails the prompt the user for their credentials
 
-    let context = new AuthenticationContext(authority);
+    let context = new AuthenticationContext(authority, false);
     context.tokenCache.readItems().then(function(items) {
       if (items.length > 0) {
-        context = new AuthenticationContext(items[0].authority);
+        context = new AuthenticationContext(items[0].authority, false);
       }
 
       // Attempt to authorize the user silently
@@ -36,7 +36,7 @@ function MSAdalLogin(authority, clientId, redirectUri, resourceUri) {
 }
 
 function MSAdalLogout(authority, redirectUri) {
-  let context = new AuthenticationContext(authority);
+  let context = new AuthenticationContext(authority, false);
   context.tokenCache.clear();
   const promise = fetch(
     "https://login.windows.net/common/oauth2/logout?post_logout_redirect_uri=" +
@@ -48,7 +48,7 @@ function MSAdalLogout(authority, redirectUri) {
 }
 
 function getValidMSAdalToken(authority) {
-  let context = new AuthenticationContext(authority);
+  let context = new AuthenticationContext(authority, false);
   return context.tokenCache.readItems().then(function(items) {
     if (items.length > 0) {
       const lastToken = items[items.length - 1];
